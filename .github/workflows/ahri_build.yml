@@ -30,7 +30,7 @@ jobs:
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.AHRI_BUILD }}
           submodules: recursive
 
       - name: setup node
