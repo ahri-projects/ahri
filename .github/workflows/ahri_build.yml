@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # Desktop para Arm (M1 e acima)
+          - platform: "macos-latest" # Desktop para Arm (M1)
             args: "--target aarch64-apple-darwin"
           - platform: "macos-latest" # Desktop para Intel
             args: "--target x86_64-apple-darwin"
@@ -23,6 +23,13 @@ jobs:
             args: ""
           - platform: "windows-latest" # Desktop para Windows
             args: ""
+          # Build mobile para iOS (em runners macOS)
+          - platform: "macos-latest"
+            args: "--mobile"
+          # Build mobile para Android (em runners Ubuntu, por exemplo)
+          - platform: "ubuntu-22.04"
+            args: "--mobile"
+
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
