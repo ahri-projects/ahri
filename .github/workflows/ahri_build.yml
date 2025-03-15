@@ -24,6 +24,10 @@ jobs:
             args: ""
           - platform: "windows-latest"
             args: ""
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin --mobile"
+          - platform: "ubuntu-22.04"
+            args: "--mobile"
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
@@ -53,7 +57,6 @@ jobs:
         run: yarn install
 
       - name: Build Tauri app
-        id: tauri
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,11 +64,6 @@ jobs:
           tagName: app-v__VERSION__
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
-          releaseDraft: false
+          releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-
-      - name: Print release URL
-        env:
-          RELEASE_URL: ${{ steps.tauri.outputs.releaseHtmlUrl }}
-        run: "echo 'Release URL: $RELEASE_URL'"
