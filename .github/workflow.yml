@@ -1,0 +1,66 @@
+name: "publish"
+
+on:
+  push:
+    branches:
+      - release
+
+# Este workflow é acionado a cada push na branch "release" para criar ou atualizar um GitHub release, construir o app e fazer o upload dos artefatos.
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest" # para Macs com ARM (M1 e acima)
+            args: "--target aarch64-apple-darwin"
+          - platform: "macos-latest" # para Macs com Intel
+            args: "--target x86_64-apple-darwin"
+          - platform: "ubuntu-22.04" # para Tauri v1, você pode substituir por ubuntu-20.04.
+            args: ""
+          - platform: "windows-latest"
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AHRI_BUILD }}
+          submodules: recursive
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Esses targets são usados apenas em runners macos, por isso estão condicionais.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: install frontend dependencies
+        working-directory: ahri-app
+        run: yarn install
+
+      - name: build and package tauri app
+        working-directory: ahri-app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          AHRI_BUILD: ${{ secrets.AHRI_BUILD }}
+        with:
+          tagName: app-v__VERSION__
+          releaseName: "App v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
