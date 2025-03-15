@@ -23,10 +23,6 @@ jobs:
             args: ""
           - platform: "windows-latest" # Desktop para Windows
             args: ""
-          - platform: "macos-latest" # Mobile iOS (somente em macOS)
-            args: "--mobile true"
-          - platform: "ubuntu-22.04" # Mobile Android
-            args: "--mobile true"
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
