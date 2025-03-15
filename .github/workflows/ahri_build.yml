@@ -55,19 +55,21 @@ jobs:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: ${{ matrix.platform == 'ubuntu-22.04' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
-      # Instala o Android NDK somente para builds mobile no Ubuntu (Android)
+      - name: Install unzip (ubuntu only)
+        if: ${{ matrix.platform == 'ubuntu-22.04' }}
+        run: sudo apt-get install -y unzip
+
       - name: Install Android NDK
         if: ${{ matrix.mobile && matrix.platform == 'ubuntu-22.04' }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y android-ndk
-          # Define NDK_HOME com base no local do ndk-build
-          echo "NDK_HOME=$(dirname $(which ndk-build))/.." >> $GITHUB_ENV
+          wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+          unzip android-ndk-r21e-linux-x86_64.zip -d $HOME/android-ndk
+          echo "NDK_HOME=$HOME/android-ndk/android-ndk-r21e" >> $GITHUB_ENV
 
       - name: Install frontend dependencies
         working-directory: ahri-app
