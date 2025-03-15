@@ -24,10 +24,6 @@ jobs:
             args: ""
           - platform: "windows-latest"
             args: ""
-          - platform: "macos-latest"
-            args: "--target aarch64-apple-darwin --mobile"
-          - platform: "ubuntu-22.04"
-            args: "--mobile"
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
@@ -67,3 +63,4 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+          mobile: true
