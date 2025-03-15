@@ -16,14 +16,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest"
+          - platform: "macos-latest" # Desktop para Arm (M1 e acima)
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest"
+            mobile: "false" # sem mobile nesta build
+          - platform: "macos-latest" # Desktop para Intel
             args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04"
+            mobile: "false"
+          - platform: "ubuntu-22.04" # Desktop para Linux
             args: ""
-          - platform: "windows-latest"
+            mobile: "false"
+          - platform: "windows-latest" # Desktop para Windows
             args: ""
+            mobile: "false"
+          - platform: "macos-latest" # Mobile iOS (somente em macOS)
+            args: ""
+            mobile: "true"
+          - platform: "ubuntu-22.04" # Mobile Android (em Ubuntu ou em todos, se usar "android")
+            args: ""
+            mobile: "androtrueid"
+
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
@@ -63,4 +74,4 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-          mobile: true
+          mobile: ${{ matrix.mobile }}
