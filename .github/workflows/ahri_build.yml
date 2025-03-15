@@ -71,6 +71,14 @@ jobs:
           unzip android-ndk-r21e-linux-x86_64.zip -d $HOME/android-ndk
           echo "NDK_HOME=$HOME/android-ndk/android-ndk-r21e" >> $GITHUB_ENV
 
+      - name: Install Rust Android target
+        if: ${{ matrix.mobile && matrix.platform == 'ubuntu-22.04' }}
+        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+      - name: Install Rust iOS target
+        if: ${{ matrix.mobile && matrix.platform == 'macos-latest' }}
+        run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+
       - name: Install frontend dependencies
         working-directory: ahri-app
         run: yarn install
