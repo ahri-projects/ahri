@@ -1,0 +1,3 @@
+[submodule "ahri-app"]
+	path = ahri-app
+	url = https://github.com/brenogonzaga/ahri-app.git
