@@ -33,7 +33,7 @@ jobs:
             mobile: "true"
           - platform: "ubuntu-22.04" # Mobile Android (em Ubuntu ou em todos, se usar "android")
             args: ""
-            mobile: "androtrueid"
+            mobile: "true"
 
     runs-on: ${{ matrix.platform }}
     steps:
