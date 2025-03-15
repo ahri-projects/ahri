@@ -32,7 +32,7 @@ jobs:
           - platform: "macos-latest" # Build mobile para iOS (somente em macOS)
             args: ""
             mobile: true
-          - platform: "ubuntu-22.04" # Build mobile para Android (em Ubuntu, por exemplo)
+          - platform: "ubuntu-22.04" # Build mobile para Android (em Ubuntu)
             args: ""
             mobile: true
 
@@ -67,17 +67,9 @@ jobs:
       - name: Install Android NDK
         if: ${{ matrix.mobile && matrix.platform == 'ubuntu-22.04' }}
         run: |
-          wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-          unzip android-ndk-r21e-linux-x86_64.zip -d $HOME/android-ndk
-          echo "NDK_HOME=$HOME/android-ndk/android-ndk-r21e" >> $GITHUB_ENV
-
-      - name: Install Rust Android target
-        if: ${{ matrix.mobile && matrix.platform == 'ubuntu-22.04' }}
-        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
-
-      - name: Install Rust iOS target
-        if: ${{ matrix.mobile && matrix.platform == 'macos-latest' }}
-        run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+          wget https://dl.google.com/android/repository/android-ndk-r23b-linux-x86_64.zip
+          unzip android-ndk-r23b-linux-x86_64.zip -d $HOME/android-ndk
+          echo "NDK_HOME=$HOME/android-ndk/android-ndk-r23b" >> $GITHUB_ENV
 
       - name: Install frontend dependencies
         working-directory: ahri-app
@@ -88,11 +80,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectPath: "ahri-app"
+          projectPath: "ahri-app" # Define o diretório do projeto Tauri
           tagName: app-v__VERSION__
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          mobile: ${{ matrix.mobile }}
+          mobile: ${{ matrix.mobile }} # true para builds mobile, false para desktop
           args: ${{ matrix.args }}
