@@ -60,6 +60,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      # Instala o Android NDK somente para builds mobile no Ubuntu (Android)
+      - name: Install Android NDK
+        if: ${{ matrix.mobile && matrix.platform == 'ubuntu-22.04' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y android-ndk
+          # Define NDK_HOME com base no local do ndk-build
+          echo "NDK_HOME=$(dirname $(which ndk-build))/.." >> $GITHUB_ENV
+
       - name: Install frontend dependencies
         working-directory: ahri-app
         run: yarn install
@@ -69,11 +78,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectPath: "ahri-app" # Diretório onde está o projeto Tauri
+          projectPath: "ahri-app"
           tagName: app-v__VERSION__
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          mobile: ${{ matrix.mobile }} # Se true, build mobile; se false, build desktop
+          mobile: ${{ matrix.mobile }}
           args: ${{ matrix.args }}
