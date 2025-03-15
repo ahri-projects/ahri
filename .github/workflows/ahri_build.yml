@@ -15,20 +15,26 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Builds Desktop
           - platform: "macos-latest" # Desktop para Arm (M1)
             args: "--target aarch64-apple-darwin"
+            mobile: false
           - platform: "macos-latest" # Desktop para Intel
             args: "--target x86_64-apple-darwin"
+            mobile: false
           - platform: "ubuntu-22.04" # Desktop para Linux
             args: ""
+            mobile: false
           - platform: "windows-latest" # Desktop para Windows
             args: ""
-          # Build mobile para iOS (em runners macOS)
-          - platform: "macos-latest"
-            args: "--mobile"
-          # Build mobile para Android (em runners Ubuntu, por exemplo)
-          - platform: "ubuntu-22.04"
-            args: "--mobile"
+            mobile: false
+          # Builds Mobile
+          - platform: "macos-latest" # Build mobile para iOS (somente em macOS)
+            args: ""
+            mobile: true
+          - platform: "ubuntu-22.04" # Build mobile para Android (em Ubuntu, por exemplo)
+            args: ""
+            mobile: true
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -63,10 +69,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          projectPath: "ahri-app" # Diretório onde está o projeto Tauri
           tagName: app-v__VERSION__
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          mobile: true
+          mobile: ${{ matrix.mobile }} # Se true, build mobile; se false, build desktop
           args: ${{ matrix.args }}
