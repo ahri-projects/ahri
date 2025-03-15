@@ -5,8 +5,7 @@ on:
     branches:
       - release
 
-# This workflow will trigger on each push to the `release` branch to create or update a GitHub release,
-# build your app from the "ahri-app" submodule, and upload the artifacts to the release.
+# Esse workflow cria ou atualiza um release com os artefatos gerados a partir do submódulo "ahri-app".
 
 jobs:
   publish-tauri:
@@ -26,9 +25,8 @@ jobs:
             args: ""
           - platform: "macos-latest" # Mobile iOS (somente em macOS)
             args: "--mobile true"
-          - platform: "ubuntu-22.04" # Mobile Android (em Ubuntu ou em todos, se usar "android")
+          - platform: "ubuntu-22.04" # Mobile Android
             args: "--mobile true"
-
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository and submodules
@@ -68,4 +66,3 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-          mobile: ${{ matrix.mobile }}
